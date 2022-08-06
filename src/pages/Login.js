@@ -36,10 +36,11 @@ class Login extends React.Component {
 
   handlePlayButton = async () => {
     const { emailInput, nameInput } = this.state;
-    const { login, gravatarImage } = this.props;
+    const { login, gravatarImage, history } = this.props;
     login(nameInput, emailInput);
     const hashEmail = md5(emailInput).toString();
     gravatarImage(hashEmail);
+    history.push('/game');
   };
 
   handleConfigButton = async () => {

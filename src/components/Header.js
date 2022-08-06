@@ -22,7 +22,7 @@ Header.propTypes = {
 
 const mapStateToProps = (store) => ({
   name: store.login.name,
-  gravatar: store.login.gravatarImage,
+  gravatar: store.login.gravatarHash,
 });
 
 export default connect(mapStateToProps)(Header);

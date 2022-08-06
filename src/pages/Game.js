@@ -5,8 +5,8 @@ class Game extends React.Component {
   render() {
     return (
       <>
-        Game
         <Header />
+        Game
       </>
     );
   }
