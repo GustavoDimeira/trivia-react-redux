@@ -1,5 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import md5 from 'crypto-js/md5';
+import { gravatarAction, loginAction } from '../redux/actions';
 
 class Login extends React.Component {
   constructor() {
@@ -31,8 +34,21 @@ class Login extends React.Component {
     }, this.validateButton);
   };
 
+  handlePlayButton = async () => {
+    const { emailInput, nameInput } = this.state;
+    const { login, gravatarImage } = this.props;
+    login(nameInput, emailInput);
+    const hashEmail = md5(emailInput).toString();
+    gravatarImage(hashEmail);
+  };
+
+  handleConfigButton = async () => {
+    const { history } = this.props;
+    history.push('/settings');
+  };
+
   render() {
-    const { isPlayButtonDisabled, nameInput, emailInput } = this.state;
+    const { isPlayButtonDisabled, nameInput, emailInput, teste } = this.state;
     return (
       <div>
         <label htmlFor="nameInput">
@@ -61,19 +77,32 @@ class Login extends React.Component {
           type="button"
           data-testid="btn-play"
           disabled={ isPlayButtonDisabled }
+          onClick={ this.handlePlayButton }
         >
           Play
         </button>
-        <Link to="/settings" data-testid="btn-settings">
-          <button
-            type="button"
-          >
-            Configurações
-          </button>
-        </Link>
+        <button
+          type="button"
+          data-testid="btn-settings"
+          onClick={ this.handleConfigButton }
+        >
+          Configurações
+        </button>
+        <img src={ teste } alt={ teste } />
       </div>
     );
   }
 }
 
-export default Login;
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+  history: PropTypes.shape().isRequired,
+  gravatarImage: PropTypes.string.isRequired,
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  login: (nameUser, emailUser) => dispatch(loginAction(nameUser, emailUser)),
+  gravatarImage: (hash) => dispatch(gravatarAction(hash)),
+});
+
+export default connect(null, mapDispatchToProps)(Login);
