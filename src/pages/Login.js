@@ -1,7 +1,6 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { fetchToken } from '../services/FetchAPI';
-import { Link } from 'react-router-dom';
 
 class Login extends React.Component {
   constructor() {
