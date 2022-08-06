@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { fetchToken } from '../services/FetchAPI';
+import { Link } from 'react-router-dom';
 
 class Login extends React.Component {
   constructor() {
@@ -75,6 +76,13 @@ class Login extends React.Component {
         >
           Play
         </button>
+        <Link to="/settings" data-testid="btn-settings">
+          <button
+            type="button"
+          >
+            Configurações
+          </button>
+        </Link>
       </div>
     );
   }
