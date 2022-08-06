@@ -1,4 +1,6 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
+import { fetchToken } from '../services/FetchAPI';
 
 class Login extends React.Component {
   constructor() {
@@ -7,6 +9,7 @@ class Login extends React.Component {
       nameInput: '',
       emailInput: '',
       isPlayButtonDisabled: true,
+      isLooged: false,
     };
   }
 
@@ -30,10 +33,18 @@ class Login extends React.Component {
     }, this.validateButton);
   };
 
+  handleClick = async () => {
+    localStorage.setItem('token', await fetchToken());
+    this.setState({
+      isLooged: true,
+    });
+  }
+
   render() {
-    const { isPlayButtonDisabled, nameInput, emailInput } = this.state;
+    const { isPlayButtonDisabled, nameInput, emailInput, isLooged } = this.state;
     return (
       <div>
+        { isLooged && <Redirect to="/game" /> }
         <label htmlFor="nameInput">
           <input
             type="text"
@@ -60,6 +71,7 @@ class Login extends React.Component {
           type="button"
           data-testid="btn-play"
           disabled={ isPlayButtonDisabled }
+          onClick={ this.handleClick }
         >
           Play
         </button>
