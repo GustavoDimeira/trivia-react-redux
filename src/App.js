@@ -12,6 +12,7 @@ function App() {
       <Route exact path="/" component={ Login } />
       <Route exact path="/game" component={ Game } />
       <Route path="/settings" component={ Settings } />
+      <Route exact path="/game" component={ Game } />
     </Switch>
     // </div>
   );

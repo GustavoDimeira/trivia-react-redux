@@ -1,5 +1,9 @@
 import React from 'react';
-import { Redirect, Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import md5 from 'crypto-js/md5';
+import { Redirect } from 'react-router-dom';
+import { gravatarAction, loginAction } from '../redux/actions';
 import { fetchToken } from '../services/FetchAPI';
 
 class Login extends React.Component {
@@ -9,7 +13,7 @@ class Login extends React.Component {
       nameInput: '',
       emailInput: '',
       isPlayButtonDisabled: true,
-      isLooged: false,
+      isLogged: false,
     };
   }
 
@@ -33,18 +37,28 @@ class Login extends React.Component {
     }, this.validateButton);
   };
 
-  handleClick = async () => {
+  handlePlayButton = async () => {
     localStorage.setItem('token', await fetchToken());
     this.setState({
-      isLooged: true,
+      isLogged: true,
     });
-  }
+    const { emailInput, nameInput } = this.state;
+    const { login, gravatarImage } = this.props;
+    login(nameInput, emailInput);
+    const hashEmail = md5(emailInput).toString();
+    gravatarImage(hashEmail);
+  };
+
+  handleConfigButton = async () => {
+    const { history } = this.props;
+    history.push('/settings');
+  };
 
   render() {
-    const { isPlayButtonDisabled, nameInput, emailInput, isLooged } = this.state;
+    const { isPlayButtonDisabled, nameInput, emailInput, isLogged } = this.state;
     return (
       <div>
-        { isLooged && <Redirect to="/game" /> }
+        { isLogged && <Redirect to="/game" /> }
         <label htmlFor="nameInput">
           <input
             type="text"
@@ -71,20 +85,31 @@ class Login extends React.Component {
           type="button"
           data-testid="btn-play"
           disabled={ isPlayButtonDisabled }
-          onClick={ this.handleClick }
+          onClick={ this.handlePlayButton }
         >
           Play
         </button>
-        <Link to="/settings" data-testid="btn-settings">
-          <button
-            type="button"
-          >
-            Configurações
-          </button>
-        </Link>
+        <button
+          type="button"
+          data-testid="btn-settings"
+          onClick={ this.handleConfigButton }
+        >
+          Configurações
+        </button>
       </div>
     );
   }
 }
 
-export default Login;
+Login.propTypes = {
+  login: PropTypes.func.isRequired,
+  gravatarImage: PropTypes.func.isRequired,
+  history: PropTypes.shape().isRequired,
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  login: (nameUser, emailUser) => dispatch(loginAction(nameUser, emailUser)),
+  gravatarImage: (hash) => dispatch(gravatarAction(hash)),
+});
+
+export default connect(null, mapDispatchToProps)(Login);
