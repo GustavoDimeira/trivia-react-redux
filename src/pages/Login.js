@@ -9,7 +9,7 @@ class Login extends React.Component {
       nameInput: '',
       emailInput: '',
       isPlayButtonDisabled: true,
-      isLooged: false,
+      isLogged: false,
     };
   }
 
@@ -36,15 +36,15 @@ class Login extends React.Component {
   handleClick = async () => {
     localStorage.setItem('token', await fetchToken());
     this.setState({
-      isLooged: true,
+      isLogged: true,
     });
   }
 
   render() {
-    const { isPlayButtonDisabled, nameInput, emailInput, isLooged } = this.state;
+    const { isPlayButtonDisabled, nameInput, emailInput, isLogged } = this.state;
     return (
       <div>
-        { isLooged && <Redirect to="/game" /> }
+        { isLogged && <Redirect to="/game" /> }
         <label htmlFor="nameInput">
           <input
             type="text"
