@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import md5 from 'crypto-js/md5';
+import { Redirect } from 'react-router-dom';
 import { gravatarAction, loginAction } from '../redux/actions';
-import { Redirect, Link } from 'react-router-dom';
 import { fetchToken } from '../services/FetchAPI';
 
 class Login extends React.Component {
@@ -13,7 +13,7 @@ class Login extends React.Component {
       nameInput: '',
       emailInput: '',
       isPlayButtonDisabled: true,
-      isLooged: false,
+      isLogged: false,
     };
   }
 
@@ -39,9 +39,9 @@ class Login extends React.Component {
 
   handlePlayButton = async () => {
     localStorage.setItem('token', await fetchToken());
-      this.setState({
-        isLooged: true,
-      });
+    this.setState({
+      isLogged: true,
+    });
     const { emailInput, nameInput } = this.state;
     const { login, gravatarImage } = this.props;
     login(nameInput, emailInput);
@@ -55,10 +55,10 @@ class Login extends React.Component {
   };
 
   render() {
-    const { isPlayButtonDisabled, nameInput, emailInput, isLooged } = this.state;
+    const { isPlayButtonDisabled, nameInput, emailInput, isLogged } = this.state;
     return (
       <div>
-        { isLooged && <Redirect to="/game" /> }
+        { isLogged && <Redirect to="/game" /> }
         <label htmlFor="nameInput">
           <input
             type="text"
@@ -103,7 +103,8 @@ class Login extends React.Component {
 
 Login.propTypes = {
   login: PropTypes.func.isRequired,
-  gravatarImage: PropTypes.string.isRequired,
+  gravatarImage: PropTypes.func.isRequired,
+  history: PropTypes.shape().isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => ({
