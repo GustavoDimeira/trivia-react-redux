@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import md5 from 'crypto-js/md5';
 import { gravatarAction, loginAction } from '../redux/actions';
+import { Redirect, Link } from 'react-router-dom';
+import { fetchToken } from '../services/FetchAPI';
 
 class Login extends React.Component {
   constructor() {
@@ -11,6 +13,7 @@ class Login extends React.Component {
       nameInput: '',
       emailInput: '',
       isPlayButtonDisabled: true,
+      isLooged: false,
     };
   }
 
@@ -35,12 +38,15 @@ class Login extends React.Component {
   };
 
   handlePlayButton = async () => {
+    localStorage.setItem('token', await fetchToken());
+      this.setState({
+        isLooged: true,
+      });
     const { emailInput, nameInput } = this.state;
-    const { login, gravatarImage, history } = this.props;
+    const { login, gravatarImage } = this.props;
     login(nameInput, emailInput);
     const hashEmail = md5(emailInput).toString();
     gravatarImage(hashEmail);
-    history.push('/game');
   };
 
   handleConfigButton = async () => {
@@ -49,9 +55,10 @@ class Login extends React.Component {
   };
 
   render() {
-    const { isPlayButtonDisabled, nameInput, emailInput, teste } = this.state;
+    const { isPlayButtonDisabled, nameInput, emailInput, isLooged } = this.state;
     return (
       <div>
+        { isLooged && <Redirect to="/game" /> }
         <label htmlFor="nameInput">
           <input
             type="text"
@@ -89,7 +96,6 @@ class Login extends React.Component {
         >
           Configurações
         </button>
-        <img src={ teste } alt={ teste } />
       </div>
     );
   }
@@ -97,7 +103,6 @@ class Login extends React.Component {
 
 Login.propTypes = {
   login: PropTypes.func.isRequired,
-  history: PropTypes.shape().isRequired,
   gravatarImage: PropTypes.string.isRequired,
 };
 
