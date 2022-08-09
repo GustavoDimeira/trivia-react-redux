@@ -77,8 +77,8 @@ class Game extends React.Component {
   };
 
   handleAnswer = () => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
-    // const { indexQuestion } = this.state;
-    // this.setState({ indexQuestion: indexQuestion + 1 });
+    const { indexQuestion } = this.state;
+    this.setState({ indexQuestion: indexQuestion + 1 });
 
     // 1- Colocar uma classe em todas as respostas.
     // 2- Mudar esta classe no momento que a resposta for clicada
