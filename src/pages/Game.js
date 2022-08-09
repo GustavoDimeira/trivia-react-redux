@@ -76,25 +76,10 @@ class Game extends React.Component {
     });
   };
 
-  handleAnswer = () => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
+  handleAnswer = (target) => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
     const { indexQuestion } = this.state;
     this.setState({ indexQuestion: indexQuestion + 1 });
-
-    // 1- Colocar uma classe em todas as respostas.
-    // 2- Mudar esta classe no momento que a resposta for clicada
-    // 3- Ficar estática a imagem, e aparecer o botão Next
-
-    // const { className } = target;
-    // if (className === 'correctAnswerWait') {
-    //   // const select = target;
-    //   // target.classList.remove('correctAnswerWait');
-    //   target.classList.add('correctAnswer');
-    // }
-    // if (className === 'wrongAnswerWait') {
-    //   // const select = target;
-    //   // target.classList.remove('wrongAnswerWait');
-    //   target.classList.add('wrongAnswer');
-    // }
+    console.log(target.className);
 
     const correta = document.getElementsByClassName('correctAnswerWait');
     const arr = Array.prototype.slice.call(correta);
@@ -129,7 +114,7 @@ class Game extends React.Component {
               <button
                 key={ `${question}1` }
                 type="button"
-                onClick={ () => this.handleAnswer() }
+                onClick={ ({ target }) => this.handleAnswer(target) }
                 className={ question === questionCorrectAnswers[indexQuestion]
                   ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
