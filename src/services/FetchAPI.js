@@ -5,7 +5,12 @@ export const fetchToken = async () => {
 };
 
 export const fetchQuestions = async (token) => {
-  const response = await fetch(`https://opentdb.com/api.php?amount=5&token=${token}`);
-  const data = await response.json();
-  return data.results;
+  try {
+    const response = await fetch(`https://opentdb.com/api.php?amount=5&token=${token}`);
+    const data = await response.json();
+    // console.log('log:', data.results);
+    return data.results;
+  } catch (error) {
+    console.log(`algo deu errado: ( /n${error})`);
+  }
 };
