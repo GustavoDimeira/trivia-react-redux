@@ -79,6 +79,10 @@ class Game extends React.Component {
   handleAnswer = () => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
     const { indexQuestion } = this.state;
     this.setState({ indexQuestion: indexQuestion + 1 });
+
+    // 1- Colocar uma classe em todas as respostas.
+    // 2- Mudar esta classe no momento que a resposta for clicada
+    // 3- Ficar estática a imagem, e aparecer o botão Next
   };
 
   render() {
@@ -103,6 +107,8 @@ class Game extends React.Component {
                 key={ `${question}1` }
                 type="button"
                 onClick={ () => this.handleAnswer() }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
@@ -116,6 +122,8 @@ class Game extends React.Component {
                 key={ `${question}2` }
                 type="button"
                 onClick={ () => this.handleAnswer() }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
@@ -129,6 +137,8 @@ class Game extends React.Component {
                 key={ `${question}3` }
                 type="button"
                 onClick={ () => this.handleAnswer() }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
@@ -142,6 +152,8 @@ class Game extends React.Component {
                 key={ `${question}4` }
                 type="button"
                 onClick={ () => this.handleAnswer() }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
@@ -155,6 +167,8 @@ class Game extends React.Component {
                 key={ `${question}5` }
                 type="button"
                 onClick={ () => this.handleAnswer() }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
