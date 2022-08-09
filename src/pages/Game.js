@@ -3,17 +3,24 @@ import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import { fetchQuestions } from '../services/FetchAPI';
 
+const correctAnswer = 'correct-answer'; // por conta de repetir muitas vezes a palavra
+const tres = 3; // por conta do no magic numbers
+const quatro = 4; // por conta do no magic numbers
+
 class Game extends React.Component {
   constructor() {
     super();
     this.state = {
       errorApi: false,
-      questionType: [],
       questionsCategory: [],
       questionCorrectAnswers: [],
-      questionAnswers: [],
       questionQuestions: [],
       indexQuestion: 0,
+      answersQuestion1: [],
+      answersQuestion2: [],
+      answersQuestion3: [],
+      answersQuestion4: [],
+      answersQuestion5: [],
     };
   }
 
@@ -21,56 +28,64 @@ class Game extends React.Component {
     this.getQuestions();
   }
 
-  getQuestions = async () => {
-    const { indexQuestion } = this.state;
-    const token = localStorage.getItem('token');
-    const tokenApi = await fetchQuestions(token);
-    const questionsLength = 5;
-    if (tokenApi.length !== questionsLength) {
-      this.setState({ errorApi: true });
-      localStorage.clear();
-    }
-    const arrayOfTypes = tokenApi.map((element) => element.type);
-    const arrayOfCategories = tokenApi.map((element) => element.category);
-    const arrayOfQuestions = tokenApi.map((element) => element.question);
-    const arrayOfCorrectAnswer = tokenApi.map((element) => element.correct_answer);
-    const arrayOfIncorrectAnswer = tokenApi.map((element) => element.incorrect_answers);
-    // console.log('arrayOfCorrectAnswer', arrayOfCorrectAnswer);
-    // console.log('arrayOfIncorrectAnswer', arrayOfIncorrectAnswer);
-    // console.log('arrayOfAll', [...arrayOfIncorrectAnswer[indexQuestion],
-    // arrayOfCorrectAnswer[indexQuestion]]);
-
-    this.setState({
-      questionType: arrayOfTypes,
-      questionsCategory: arrayOfCategories,
-      questionQuestions: arrayOfQuestions,
-      questionCorrectAnswers: arrayOfCorrectAnswer,
-      questionAnswers: ([...arrayOfIncorrectAnswer,
-        arrayOfCorrectAnswer]),
-    });
-    console.log('teste', tokenApi.map((element) => element));
-  };
-
-  shuffleArray = (array) => {
+  shuffleArray = (array) => { // função para embaralhar as respostas
     for (let i = array.length - 1; i > 0; i -= 1) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
     }
   };
 
-  handleAnswer = (question) => {
-    const { indexQuestion, questionCorrectAnswers, questionAnswers } = this.state;
-    this.setState({ indexQuestion: indexQuestion + 1 });
-    console.log(question);
-
+  getQuestions = async () => {
+    // recuperando o token do localStorage
+    const token = localStorage.getItem('token');
+    // requisição à API
+    const tokenApi = await fetchQuestions(token);
+    // redirecionamento para a tela de login caso a API falhe (utilizando estado local com renderização condicional)
+    const questionsLength = 5;
+    if (tokenApi.length !== questionsLength) {
+      this.setState({ errorApi: true });
+      localStorage.clear();
+    }
+    // pegando os arrays com as chaves necessarias da api
+    const arrayOfCategories = tokenApi.map((element) => element.category);
+    const arrayOfQuestions = tokenApi.map((element) => element.question);
+    const arrayOfCorrectAnswer = tokenApi.map((element) => element.correct_answer);
+    const arrayOfIncorrectAnswer = tokenApi.map((element) => element.incorrect_answers);
+    // pegando as respostas das 5 perguntas (de forma repetitiva pois caso contrário bugava)
+    const answersQuestion1 = [...arrayOfIncorrectAnswer[0], arrayOfCorrectAnswer[0]];
+    const answersQuestion2 = [...arrayOfIncorrectAnswer[1], arrayOfCorrectAnswer[1]];
+    const answersQuestion3 = [...arrayOfIncorrectAnswer[2], arrayOfCorrectAnswer[2]];
+    const answersQuestion4 = [...arrayOfIncorrectAnswer[3], arrayOfCorrectAnswer[3]];
+    const answersQuestion5 = [...arrayOfIncorrectAnswer[4], arrayOfCorrectAnswer[4]];
+    // embaralhando as respostas de forma aleatória
+    this.shuffleArray(answersQuestion1);
+    this.shuffleArray(answersQuestion2);
+    this.shuffleArray(answersQuestion3);
+    this.shuffleArray(answersQuestion4);
+    this.shuffleArray(answersQuestion5);
+    // jogando as informações para o estado local
     this.setState({
+      questionsCategory: arrayOfCategories,
+      questionQuestions: arrayOfQuestions,
+      questionCorrectAnswers: arrayOfCorrectAnswer,
+      answersQuestion1,
+      answersQuestion2,
+      answersQuestion3,
+      answersQuestion4,
+      answersQuestion5,
     });
   };
 
+  handleAnswer = () => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
+    const { indexQuestion } = this.state;
+    this.setState({ indexQuestion: indexQuestion + 1 });
+  };
+
   render() {
-    const { errorApi, questionType, questionsCategory,
-      questionQuestions, indexQuestion, questionAnswers,
-      questionCorrectAnswers } = this.state;
+    const { errorApi, questionsCategory,
+      questionQuestions, indexQuestion,
+      questionCorrectAnswers, answersQuestion1, answersQuestion2, answersQuestion3,
+      answersQuestion4, answersQuestion5 } = this.state;
     return (
       <>
         <Header />
@@ -79,32 +94,74 @@ class Game extends React.Component {
         >
           { `Categoria: ${questionsCategory[indexQuestion]}` }
         </span>
-        <span data-testid="question-text">{ questionQuestions[indexQuestion] }</span>
-        {/* {
-          questionType[indexQuestion] === 'multiple'
-            ? (
-              <div>
-
-              </div>
-            )
-            : (
-              <div>
-
-              </div>
-            )
-        } */}
-        {
-          questionAnswers.map((question, index) => (
-            <button
-              key={ question }
-              type="button"
-              onClick={ () => this.handleAnswer(question) }
-              data-testid={ question === questionCorrectAnswers[indexQuestion]
-                ? 'correct-answer' : `wrong-answer-${index}` }
-            >
-              { question }
-            </button>))
-        }
+        <p data-testid="question-text">{ questionQuestions[indexQuestion] }</p>
+        <div data-testid="answer-options">
+          {
+            indexQuestion === 0
+            && answersQuestion1.map((question, index) => (
+              <button
+                key={ `${question}1` }
+                type="button"
+                onClick={ () => this.handleAnswer() }
+                data-testid={ question === questionCorrectAnswers[indexQuestion]
+                  ? correctAnswer : `wrong-answer-${index}` }
+              >
+                { question }
+              </button>))
+          }
+          {
+            indexQuestion === 1
+            && answersQuestion2.map((question, index) => (
+              <button
+                key={ `${question}2` }
+                type="button"
+                onClick={ () => this.handleAnswer() }
+                data-testid={ question === questionCorrectAnswers[indexQuestion]
+                  ? correctAnswer : `wrong-answer-${index}` }
+              >
+                { question }
+              </button>))
+          }
+          {
+            indexQuestion === 2
+            && answersQuestion3.map((question, index) => (
+              <button
+                key={ `${question}3` }
+                type="button"
+                onClick={ () => this.handleAnswer() }
+                data-testid={ question === questionCorrectAnswers[indexQuestion]
+                  ? correctAnswer : `wrong-answer-${index}` }
+              >
+                { question }
+              </button>))
+          }
+          {
+            indexQuestion === tres
+            && answersQuestion4.map((question, index) => (
+              <button
+                key={ `${question}4` }
+                type="button"
+                onClick={ () => this.handleAnswer() }
+                data-testid={ question === questionCorrectAnswers[indexQuestion]
+                  ? correctAnswer : `wrong-answer-${index}` }
+              >
+                { question }
+              </button>))
+          }
+          {
+            indexQuestion === quatro
+            && answersQuestion5.map((question, index) => (
+              <button
+                key={ `${question}5` }
+                type="button"
+                onClick={ () => this.handleAnswer() }
+                data-testid={ question === questionCorrectAnswers[indexQuestion]
+                  ? correctAnswer : `wrong-answer-${index}` }
+              >
+                { question }
+              </button>))
+          }
+        </div>
         { errorApi && <Redirect to="/" /> }
       </>
     );
