@@ -80,6 +80,17 @@ class Game extends React.Component {
     const { indexQuestion } = this.state;
     this.setState({ indexQuestion: indexQuestion + 1 });
     console.log(target.className);
+
+    const correta = document.getElementsByClassName('correctAnswerWait');
+    const arr = Array.prototype.slice.call(correta);
+    console.log('arr', arr, 'correta', correta);
+    arr[0].classList.add('correctAnswer');
+
+    const erradas = document.getElementsByClassName('wrongAnswerWait');
+    const perdeu = Array.prototype.slice.call(erradas);
+    perdeu[0].classList.add('wrongAnswer');
+    perdeu[1].classList.add('wrongAnswer');
+    perdeu[2].classList.add('wrongAnswer');
   };
 
   render() {
@@ -104,6 +115,8 @@ class Game extends React.Component {
                 key={ `${question}1` }
                 type="button"
                 onClick={ ({ target }) => this.handleAnswer(target) }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
@@ -117,6 +130,8 @@ class Game extends React.Component {
                 key={ `${question}2` }
                 type="button"
                 onClick={ () => this.handleAnswer() }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
@@ -130,6 +145,8 @@ class Game extends React.Component {
                 key={ `${question}3` }
                 type="button"
                 onClick={ () => this.handleAnswer() }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
@@ -143,6 +160,8 @@ class Game extends React.Component {
                 key={ `${question}4` }
                 type="button"
                 onClick={ () => this.handleAnswer() }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
@@ -156,6 +175,8 @@ class Game extends React.Component {
                 key={ `${question}5` }
                 type="button"
                 onClick={ () => this.handleAnswer() }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
