@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
@@ -80,14 +81,12 @@ class Game extends React.Component {
   };
 
   handleAnswer = (target) => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
-    // const { indexQuestion } = this.state;
-    // this.setState({ indexQuestion: indexQuestion + 1 });
     this.setState({
       questionAnswerd: true,
     });
-    const { correctAnswerAction } = this.props;
+    const { correctAnswerAct } = this.props;
     if (target.className === 'correctAnswerWait') {
-      correctAnswerAction();
+      correctAnswerAct();
     }
 
     const correta = document.getElementsByClassName('correctAnswerWait');
@@ -96,16 +95,19 @@ class Game extends React.Component {
 
     const erradas = document.getElementsByClassName('wrongAnswerWait');
     const perdeu = Array.prototype.slice.call(erradas);
-    perdeu[0].classList.add('wrongAnswer');
-    perdeu[1].classList.add('wrongAnswer');
-    perdeu[2].classList.add('wrongAnswer');
+    perdeu.map((element) => element.classList.add('wrongAnswer'));
   };
 
   nextQuestion = () => {
     this.setState({ questionAnswerd: false });
     const { indexQuestion } = this.state;
     this.setState({ indexQuestion: indexQuestion + 1 });
-  }
+  };
+
+  lastQuestion = () => {
+    const { history } = this.props;
+    history.push('/feedback');
+  };
 
   render() {
     const { errorApi, questionsCategory,
@@ -124,18 +126,18 @@ class Game extends React.Component {
         <div data-testid="answer-options">
           {
             indexQuestion === 0
-        && answersQuestion1.map((question, index) => (
-          <button
-            key={ `${question}1` }
-            type="button"
-            onClick={ ({ target }) => this.handleAnswer(target) }
-            className={ question === questionCorrectAnswers[indexQuestion]
-              ? 'correctAnswerWait' : 'wrongAnswerWait' }
-            data-testid={ question === questionCorrectAnswers[indexQuestion]
-              ? correctAnswer : `wrong-answer-${index}` }
-          >
-            { question }
-          </button>))
+            && answersQuestion1.map((question, index) => (
+              <button
+                key={ `${question}1` }
+                type="button"
+                onClick={ ({ target }) => this.handleAnswer(target) }
+                className={ question === questionCorrectAnswers[indexQuestion]
+                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
+                data-testid={ question === questionCorrectAnswers[indexQuestion]
+                  ? correctAnswer : `wrong-answer-${index}` }
+              >
+                { question }
+              </button>))
           }
           {
             indexQuestion === 1
@@ -200,12 +202,24 @@ class Game extends React.Component {
           <br />
           <br />
           {
-            questionAnswerd
+            questionAnswerd && indexQuestion !== quatro
             && (
               <button
                 type="button"
                 data-testid="btn-next"
                 onClick={ () => this.nextQuestion() }
+              >
+                Next
+              </button>
+            )
+          }
+          {
+            questionAnswerd && indexQuestion === quatro
+            && (
+              <button
+                type="button"
+                data-testid="btn-next"
+                onClick={ () => this.lastQuestion() }
               >
                 Next
               </button>
@@ -218,8 +232,13 @@ class Game extends React.Component {
   }
 }
 
+Game.propTypes = {
+  correctAnswerAct: PropTypes.func.isRequired,
+  history: PropTypes.shape().isRequired,
+};
+
 const mapDispatchToProps = (dispatch) => ({
-  correctAnswerAction: () => { dispatch(correctAnswerAction()); },
+  correctAnswerAct: () => { dispatch(correctAnswerAction()); },
 });
 
 export default connect(null, mapDispatchToProps)(Game);
