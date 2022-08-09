@@ -12,7 +12,6 @@ export const gravatarAction = (gravatarHash) => ({
   gravatarHash,
 });
 
-export const correctAnswerAction = (points) => ({
+export const correctAnswerAction = () => ({
   type: POINT,
-  points,
 })
