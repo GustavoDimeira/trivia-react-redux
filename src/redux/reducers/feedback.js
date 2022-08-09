@@ -9,7 +9,7 @@ const pointReducer = (state = INITIAL_STATE, action) => {
   case POINT:
     return {
       ...state,
-      points: action.points + 1,
+      points: state.points + 1,
     };
   default:
     return state;

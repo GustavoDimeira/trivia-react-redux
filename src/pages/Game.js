@@ -1,6 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
+import { correctAnswerAction } from '../redux/actions';
 import { fetchQuestions } from '../services/FetchAPI';
 
 const correctAnswer = 'correct-answer'; // por conta de repetir muitas vezes a palavra
@@ -77,13 +79,15 @@ class Game extends React.Component {
   };
 
   handleAnswer = (target) => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
-    const { indexQuestion } = this.state;
-    this.setState({ indexQuestion: indexQuestion + 1 });
-    console.log(target.className);
+    // const { indexQuestion } = this.state;
+    // this.setState({ indexQuestion: indexQuestion + 1 });
+    const { correctAnswerAction } = this.props;
+    if (target.className === 'correctAnswerWait') {
+      correctAnswerAction();
+    }
 
     const correta = document.getElementsByClassName('correctAnswerWait');
     const arr = Array.prototype.slice.call(correta);
-    console.log('arr', arr, 'correta', correta);
     arr[0].classList.add('correctAnswer');
 
     const erradas = document.getElementsByClassName('wrongAnswerWait');
@@ -129,7 +133,7 @@ class Game extends React.Component {
               <button
                 key={ `${question}2` }
                 type="button"
-                onClick={ () => this.handleAnswer() }
+                onClick={ ({ target }) => this.handleAnswer(target) }
                 className={ question === questionCorrectAnswers[indexQuestion]
                   ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
@@ -144,7 +148,7 @@ class Game extends React.Component {
               <button
                 key={ `${question}3` }
                 type="button"
-                onClick={ () => this.handleAnswer() }
+                onClick={ ({ target }) => this.handleAnswer(target) }
                 className={ question === questionCorrectAnswers[indexQuestion]
                   ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
@@ -159,7 +163,7 @@ class Game extends React.Component {
               <button
                 key={ `${question}4` }
                 type="button"
-                onClick={ () => this.handleAnswer() }
+                onClick={ ({ target }) => this.handleAnswer(target) }
                 className={ question === questionCorrectAnswers[indexQuestion]
                   ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
@@ -174,7 +178,7 @@ class Game extends React.Component {
               <button
                 key={ `${question}5` }
                 type="button"
-                onClick={ () => this.handleAnswer() }
+                onClick={ ({ target }) => this.handleAnswer(target) }
                 className={ question === questionCorrectAnswers[indexQuestion]
                   ? 'correctAnswerWait' : 'wrongAnswerWait' }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
@@ -190,4 +194,8 @@ class Game extends React.Component {
   }
 }
 
-export default Game;
+const mapDispatchToProps = (dispatch) => ({
+  correctAnswerAction: () => {dispatch(correctAnswerAction())}
+});
+
+export default connect(null, mapDispatchToProps)(Game);
