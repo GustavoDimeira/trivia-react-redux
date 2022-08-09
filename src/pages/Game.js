@@ -76,25 +76,36 @@ class Game extends React.Component {
     });
   };
 
-  handleAnswer = ({ target }) => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
-    const { indexQuestion } = this.state;
-    this.setState({ indexQuestion: indexQuestion + 1 });
+  handleAnswer = () => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
+    // const { indexQuestion } = this.state;
+    // this.setState({ indexQuestion: indexQuestion + 1 });
 
     // 1- Colocar uma classe em todas as respostas.
     // 2- Mudar esta classe no momento que a resposta for clicada
     // 3- Ficar estática a imagem, e aparecer o botão Next
 
-    const { className } = target;
-    if (className === 'correctAnswerWait') {
-      const select = target;
-      select.classList.remove('correctAnswerWait');
-      select.classList.add('correctAnswer');
-    }
-    if (className === 'wrongAnswerWait') {
-      const select = target;
-      select.classList.remove('wrongAnswerWait');
-      select.classList.add('wrongAnswer');
-    }
+    // const { className } = target;
+    // if (className === 'correctAnswerWait') {
+    //   // const select = target;
+    //   // target.classList.remove('correctAnswerWait');
+    //   target.classList.add('correctAnswer');
+    // }
+    // if (className === 'wrongAnswerWait') {
+    //   // const select = target;
+    //   // target.classList.remove('wrongAnswerWait');
+    //   target.classList.add('wrongAnswer');
+    // }
+
+    const correta = document.getElementsByClassName('correctAnswerWait');
+    const arr = Array.prototype.slice.call(correta);
+    console.log('arr', arr, 'correta', correta);
+    arr[0].classList.add('correctAnswer');
+
+    const erradas = document.getElementsByClassName('wrongAnswerWait');
+    const perdeu = Array.prototype.slice.call(erradas);
+    perdeu[0].classList.add('wrongAnswer');
+    perdeu[1].classList.add('wrongAnswer');
+    perdeu[2].classList.add('wrongAnswer');
   };
 
   render() {
