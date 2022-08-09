@@ -24,6 +24,7 @@ class Game extends React.Component {
       answersQuestion3: [],
       answersQuestion4: [],
       answersQuestion5: [],
+      timer: 30,
       questionAnswerd: false,
     };
   }
@@ -31,6 +32,23 @@ class Game extends React.Component {
   componentDidMount() {
     this.getQuestions();
   }
+
+  componentDidUpdate() {
+    this.gameTimer();
+  }
+
+  gameTimer = () => {
+    const { timer } = this.state;
+    const second = 1000;
+    if (timer > 0) {
+      setTimeout(
+        () => this.setState({
+          timer: timer - 1,
+        }),
+        second,
+      );
+    }
+  };
 
   shuffleArray = (array) => { // função para embaralhar as respostas
     for (let i = array.length - 1; i > 0; i -= 1) {
@@ -113,10 +131,15 @@ class Game extends React.Component {
     const { errorApi, questionsCategory,
       questionQuestions, indexQuestion,
       questionCorrectAnswers, answersQuestion1, answersQuestion2, answersQuestion3,
+      answersQuestion4, answersQuestion5, timer } = this.state;
       answersQuestion4, answersQuestion5, questionAnswerd } = this.state;
     return (
       <>
         <Header />
+        <h2>
+          Tempo:
+          {timer }
+        </h2>
         <span
           data-testid="question-category"
         >
@@ -128,6 +151,7 @@ class Game extends React.Component {
             indexQuestion === 0
             && answersQuestion1.map((question, index) => (
               <button
+                disabled={ timer <= 0 }
                 key={ `${question}1` }
                 type="button"
                 onClick={ ({ target }) => this.handleAnswer(target) }
@@ -143,6 +167,7 @@ class Game extends React.Component {
             indexQuestion === 1
             && answersQuestion2.map((question, index) => (
               <button
+                disabled={ timer <= 0 }
                 key={ `${question}2` }
                 type="button"
                 onClick={ ({ target }) => this.handleAnswer(target) }
@@ -158,6 +183,7 @@ class Game extends React.Component {
             indexQuestion === 2
             && answersQuestion3.map((question, index) => (
               <button
+                disabled={ timer <= 0 }
                 key={ `${question}3` }
                 type="button"
                 onClick={ ({ target }) => this.handleAnswer(target) }
@@ -173,6 +199,7 @@ class Game extends React.Component {
             indexQuestion === tres
             && answersQuestion4.map((question, index) => (
               <button
+                disabled
                 key={ `${question}4` }
                 type="button"
                 onClick={ ({ target }) => this.handleAnswer(target) }
@@ -188,6 +215,7 @@ class Game extends React.Component {
             indexQuestion === quatro
             && answersQuestion5.map((question, index) => (
               <button
+                disabled={ timer <= 0 }
                 key={ `${question}5` }
                 type="button"
                 onClick={ ({ target }) => this.handleAnswer(target) }
