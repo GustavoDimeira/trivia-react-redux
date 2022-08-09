@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
@@ -24,6 +25,7 @@ class Game extends React.Component {
       answersQuestion4: [],
       answersQuestion5: [],
       timer: 30,
+      questionAnswerd: false,
     };
   }
 
@@ -97,11 +99,12 @@ class Game extends React.Component {
   };
 
   handleAnswer = (target) => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
-    // const { indexQuestion } = this.state;
-    // this.setState({ indexQuestion: indexQuestion + 1 });
-    const { correctAnswerAction } = this.props;
+    this.setState({
+      questionAnswerd: true,
+    });
+    const { correctAnswerAct } = this.props;
     if (target.className === 'correctAnswerWait') {
-      correctAnswerAction();
+      correctAnswerAct();
     }
 
     const correta = document.getElementsByClassName('correctAnswerWait');
@@ -110,9 +113,18 @@ class Game extends React.Component {
 
     const erradas = document.getElementsByClassName('wrongAnswerWait');
     const perdeu = Array.prototype.slice.call(erradas);
-    perdeu[0].classList.add('wrongAnswer');
-    perdeu[1].classList.add('wrongAnswer');
-    perdeu[2].classList.add('wrongAnswer');
+    perdeu.map((element) => element.classList.add('wrongAnswer'));
+  };
+
+  nextQuestion = () => {
+    this.setState({ questionAnswerd: false });
+    const { indexQuestion } = this.state;
+    this.setState({ indexQuestion: indexQuestion + 1 });
+  };
+
+  lastQuestion = () => {
+    const { history } = this.props;
+    history.push('/feedback');
   };
 
   render() {
@@ -120,6 +132,7 @@ class Game extends React.Component {
       questionQuestions, indexQuestion,
       questionCorrectAnswers, answersQuestion1, answersQuestion2, answersQuestion3,
       answersQuestion4, answersQuestion5, timer } = this.state;
+      answersQuestion4, answersQuestion5, questionAnswerd } = this.state;
     return (
       <>
         <Header />
@@ -214,6 +227,32 @@ class Game extends React.Component {
                 { question }
               </button>))
           }
+          <br />
+          <br />
+          {
+            questionAnswerd && indexQuestion !== quatro
+            && (
+              <button
+                type="button"
+                data-testid="btn-next"
+                onClick={ () => this.nextQuestion() }
+              >
+                Next
+              </button>
+            )
+          }
+          {
+            questionAnswerd && indexQuestion === quatro
+            && (
+              <button
+                type="button"
+                data-testid="btn-next"
+                onClick={ () => this.lastQuestion() }
+              >
+                Next
+              </button>
+            )
+          }
         </div>
         { errorApi && <Redirect to="/" /> }
       </>
@@ -221,8 +260,13 @@ class Game extends React.Component {
   }
 }
 
+Game.propTypes = {
+  correctAnswerAct: PropTypes.func.isRequired,
+  history: PropTypes.shape().isRequired,
+};
+
 const mapDispatchToProps = (dispatch) => ({
-  correctAnswerAction: () => { dispatch(correctAnswerAction()); },
+  correctAnswerAct: () => { dispatch(correctAnswerAction()); },
 });
 
 export default connect(null, mapDispatchToProps)(Game);
