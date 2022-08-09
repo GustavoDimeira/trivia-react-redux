@@ -23,6 +23,7 @@ class Game extends React.Component {
       answersQuestion3: [],
       answersQuestion4: [],
       answersQuestion5: [],
+      questionAnswerd: false,
     };
   }
 
@@ -81,6 +82,9 @@ class Game extends React.Component {
   handleAnswer = (target) => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
     // const { indexQuestion } = this.state;
     // this.setState({ indexQuestion: indexQuestion + 1 });
+    this.setState({
+      questionAnswerd: true,
+    });
     const { correctAnswerAction } = this.props;
     if (target.className === 'correctAnswerWait') {
       correctAnswerAction();
@@ -97,11 +101,17 @@ class Game extends React.Component {
     perdeu[2].classList.add('wrongAnswer');
   };
 
+  nextQuestion = () => {
+    this.setState({ questionAnswerd: false });
+    const { indexQuestion } = this.state;
+    this.setState({ indexQuestion: indexQuestion + 1 });
+  }
+
   render() {
     const { errorApi, questionsCategory,
       questionQuestions, indexQuestion,
       questionCorrectAnswers, answersQuestion1, answersQuestion2, answersQuestion3,
-      answersQuestion4, answersQuestion5 } = this.state;
+      answersQuestion4, answersQuestion5, questionAnswerd } = this.state;
     return (
       <>
         <Header />
@@ -114,18 +124,18 @@ class Game extends React.Component {
         <div data-testid="answer-options">
           {
             indexQuestion === 0
-            && answersQuestion1.map((question, index) => (
-              <button
-                key={ `${question}1` }
-                type="button"
-                onClick={ ({ target }) => this.handleAnswer(target) }
-                className={ question === questionCorrectAnswers[indexQuestion]
-                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
-                data-testid={ question === questionCorrectAnswers[indexQuestion]
-                  ? correctAnswer : `wrong-answer-${index}` }
-              >
-                { question }
-              </button>))
+        && answersQuestion1.map((question, index) => (
+          <button
+            key={ `${question}1` }
+            type="button"
+            onClick={ ({ target }) => this.handleAnswer(target) }
+            className={ question === questionCorrectAnswers[indexQuestion]
+              ? 'correctAnswerWait' : 'wrongAnswerWait' }
+            data-testid={ question === questionCorrectAnswers[indexQuestion]
+              ? correctAnswer : `wrong-answer-${index}` }
+          >
+            { question }
+          </button>))
           }
           {
             indexQuestion === 1
@@ -187,6 +197,20 @@ class Game extends React.Component {
                 { question }
               </button>))
           }
+          <br />
+          <br />
+          {
+            questionAnswerd
+            && (
+              <button
+                type="button"
+                data-testid="btn-next"
+                onClick={ () => this.nextQuestion() }
+              >
+                Next
+              </button>
+            )
+          }
         </div>
         { errorApi && <Redirect to="/" /> }
       </>
@@ -195,7 +219,7 @@ class Game extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  correctAnswerAction: () => {dispatch(correctAnswerAction())}
+  correctAnswerAction: () => { dispatch(correctAnswerAction()); },
 });
 
 export default connect(null, mapDispatchToProps)(Game);
