@@ -76,9 +76,10 @@ class Game extends React.Component {
     });
   };
 
-  handleAnswer = () => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
+  handleAnswer = (target) => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
     const { indexQuestion } = this.state;
     this.setState({ indexQuestion: indexQuestion + 1 });
+    console.log(target.className);
   };
 
   render() {
@@ -102,7 +103,7 @@ class Game extends React.Component {
               <button
                 key={ `${question}1` }
                 type="button"
-                onClick={ () => this.handleAnswer() }
+                onClick={ ({ target }) => this.handleAnswer(target) }
                 data-testid={ question === questionCorrectAnswers[indexQuestion]
                   ? correctAnswer : `wrong-answer-${index}` }
               >
