@@ -22,11 +22,6 @@ class Game extends React.Component {
       questionQuestions: [],
       indexQuestion: 0,
       answersQuestions: [[], [], [], [], []],
-      answersQuestion1: [],
-      answersQuestion2: [],
-      answersQuestion3: [],
-      answersQuestion4: [],
-      answersQuestion5: [],
       timer: 30,
       questionAnswerd: false };
   }
@@ -110,11 +105,16 @@ class Game extends React.Component {
   };
 
   nextQuestion = () => {
+    const { indexQuestion } = this.state;
+    if (indexQuestion === quatro) {
+      this.lastQuestion()
+    } else {
     this.setState({ questionAnswerd: false });
     const { indexQuestion } = this.state;
     clearInterval(this.timeout);
     this.gameTimer();
     this.setState({ indexQuestion: indexQuestion + 1, timer: 30 });
+    }
   };
 
   lastQuestion = () => {
@@ -154,22 +154,12 @@ class Game extends React.Component {
               </button>))}
           <br />
           <br />
-          {questionAnswerd && indexQuestion !== quatro
+          {questionAnswerd
             && (
               <button
                 type="button"
                 data-testid="btn-next"
                 onClick={ () => this.nextQuestion() }
-              >
-                Next
-              </button>
-            )}
-          {questionAnswerd && indexQuestion === quatro
-            && (
-              <button
-                type="button"
-                data-testid="btn-next"
-                onClick={ () => this.lastQuestion() }
               >
                 Next
               </button>
