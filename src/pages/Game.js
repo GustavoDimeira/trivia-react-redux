@@ -13,8 +13,7 @@ const quatro = 4; // por conta do no magic numbers
 class Game extends React.Component {
   constructor() {
     super();
-    this.state = {
-      errorApi: false,
+    this.state = { errorApi: false,
       questionsCategory: [],
       questionCorrectAnswers: [],
       questionQuestions: [],
@@ -25,8 +24,7 @@ class Game extends React.Component {
       answersQuestion4: [],
       answersQuestion5: [],
       timer: 30,
-      questionAnswerd: false,
-    };
+      questionAnswerd: false };
   }
 
   componentDidMount() {
@@ -58,59 +56,46 @@ class Game extends React.Component {
   };
 
   getQuestions = async () => {
-    // recuperando o token do localStorage
     const token = localStorage.getItem('token');
-    // requisição à API
     const tokenApi = await fetchQuestions(token);
-    // redirecionamento para a tela de login caso a API falhe (utilizando estado local com renderização condicional)
     const questionsLength = 5;
     if (tokenApi.length !== questionsLength) {
       this.setState({ errorApi: true });
       localStorage.clear();
     }
-    // pegando os arrays com as chaves necessarias da api
     const arrayOfCategories = tokenApi.map((element) => element.category);
     const arrayOfQuestions = tokenApi.map((element) => element.question);
     const arrayOfCorrectAnswer = tokenApi.map((element) => element.correct_answer);
     const arrayOfIncorrectAnswer = tokenApi.map((element) => element.incorrect_answers);
-    // pegando as respostas das 5 perguntas (de forma repetitiva pois caso contrário bugava)
     const answersQuestion1 = [...arrayOfIncorrectAnswer[0], arrayOfCorrectAnswer[0]];
     const answersQuestion2 = [...arrayOfIncorrectAnswer[1], arrayOfCorrectAnswer[1]];
     const answersQuestion3 = [...arrayOfIncorrectAnswer[2], arrayOfCorrectAnswer[2]];
     const answersQuestion4 = [...arrayOfIncorrectAnswer[3], arrayOfCorrectAnswer[3]];
     const answersQuestion5 = [...arrayOfIncorrectAnswer[4], arrayOfCorrectAnswer[4]];
-    // embaralhando as respostas de forma aleatória
     this.shuffleArray(answersQuestion1);
     this.shuffleArray(answersQuestion2);
     this.shuffleArray(answersQuestion3);
     this.shuffleArray(answersQuestion4);
     this.shuffleArray(answersQuestion5);
-    // jogando as informações para o estado local
-    this.setState({
-      questionsCategory: arrayOfCategories,
+    this.setState({ questionsCategory: arrayOfCategories,
       questionQuestions: arrayOfQuestions,
       questionCorrectAnswers: arrayOfCorrectAnswer,
       answersQuestion1,
       answersQuestion2,
       answersQuestion3,
       answersQuestion4,
-      answersQuestion5,
-    });
+      answersQuestion5 });
   };
 
   handleAnswer = (target) => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
-    this.setState({
-      questionAnswerd: true,
-    });
+    this.setState({ questionAnswerd: true });
     const { correctAnswerAct } = this.props;
     if (target.className === 'correctAnswerWait') {
       correctAnswerAct();
     }
-
     const correta = document.getElementsByClassName('correctAnswerWait');
     const arr = Array.prototype.slice.call(correta);
     arr[0].classList.add('correctAnswer');
-
     const erradas = document.getElementsByClassName('wrongAnswerWait');
     const perdeu = Array.prototype.slice.call(erradas);
     perdeu.map((element) => element.classList.add('wrongAnswer'));
@@ -128,11 +113,10 @@ class Game extends React.Component {
   };
 
   render() {
-    const { errorApi, questionsCategory,
-      questionQuestions, indexQuestion,
-      questionCorrectAnswers, answersQuestion1, answersQuestion2, answersQuestion3,
-      answersQuestion4, answersQuestion5, timer } = this.state;
-      answersQuestion4, answersQuestion5, questionAnswerd } = this.state;
+    const { errorApi, questionsCategory, questionQuestions, indexQuestion,
+      questionCorrectAnswers,
+      answersQuestion1, answersQuestion2, answersQuestion3,
+      answersQuestion4, answersQuestion5, questionAnswerd, timer } = this.state;
     return (
       <>
         <Header />
@@ -147,8 +131,7 @@ class Game extends React.Component {
         </span>
         <p data-testid="question-text">{ questionQuestions[indexQuestion] }</p>
         <div data-testid="answer-options">
-          {
-            indexQuestion === 0
+          {indexQuestion === 0
             && answersQuestion1.map((question, index) => (
               <button
                 disabled={ timer <= 0 }
@@ -161,10 +144,8 @@ class Game extends React.Component {
                   ? correctAnswer : `wrong-answer-${index}` }
               >
                 { question }
-              </button>))
-          }
-          {
-            indexQuestion === 1
+              </button>))}
+          {indexQuestion === 1
             && answersQuestion2.map((question, index) => (
               <button
                 disabled={ timer <= 0 }
@@ -177,10 +158,8 @@ class Game extends React.Component {
                   ? correctAnswer : `wrong-answer-${index}` }
               >
                 { question }
-              </button>))
-          }
-          {
-            indexQuestion === 2
+              </button>))}
+          {indexQuestion === 2
             && answersQuestion3.map((question, index) => (
               <button
                 disabled={ timer <= 0 }
@@ -193,13 +172,11 @@ class Game extends React.Component {
                   ? correctAnswer : `wrong-answer-${index}` }
               >
                 { question }
-              </button>))
-          }
-          {
-            indexQuestion === tres
+              </button>))}
+          {indexQuestion === tres
             && answersQuestion4.map((question, index) => (
               <button
-                disabled
+                disabled={ timer <= 0 }
                 key={ `${question}4` }
                 type="button"
                 onClick={ ({ target }) => this.handleAnswer(target) }
@@ -209,10 +186,8 @@ class Game extends React.Component {
                   ? correctAnswer : `wrong-answer-${index}` }
               >
                 { question }
-              </button>))
-          }
-          {
-            indexQuestion === quatro
+              </button>))}
+          {indexQuestion === quatro
             && answersQuestion5.map((question, index) => (
               <button
                 disabled={ timer <= 0 }
@@ -225,12 +200,10 @@ class Game extends React.Component {
                   ? correctAnswer : `wrong-answer-${index}` }
               >
                 { question }
-              </button>))
-          }
+              </button>))}
           <br />
           <br />
-          {
-            questionAnswerd && indexQuestion !== quatro
+          {questionAnswerd && indexQuestion !== quatro
             && (
               <button
                 type="button"
@@ -239,10 +212,8 @@ class Game extends React.Component {
               >
                 Next
               </button>
-            )
-          }
-          {
-            questionAnswerd && indexQuestion === quatro
+            )}
+          {questionAnswerd && indexQuestion === quatro
             && (
               <button
                 type="button"
@@ -251,8 +222,7 @@ class Game extends React.Component {
               >
                 Next
               </button>
-            )
-          }
+            )}
         </div>
         { errorApi && <Redirect to="/" /> }
       </>
@@ -264,9 +234,7 @@ Game.propTypes = {
   correctAnswerAct: PropTypes.func.isRequired,
   history: PropTypes.shape().isRequired,
 };
-
 const mapDispatchToProps = (dispatch) => ({
   correctAnswerAct: () => { dispatch(correctAnswerAction()); },
 });
-
 export default connect(null, mapDispatchToProps)(Game);
