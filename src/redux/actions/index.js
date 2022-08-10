@@ -20,3 +20,11 @@ export const scoreAction = (score) => ({
   type: 'SCORE',
   score,
 });
+
+export const resetScoreAction = () => ({
+  type: 'RESET_SCORE',
+});
+
+export const resetAssertionsAction = () => ({
+  type: 'RESET_ASSERTIONS',
+});
