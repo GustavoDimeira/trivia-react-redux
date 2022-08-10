@@ -15,3 +15,8 @@ export const gravatarAction = (gravatarHash) => ({
 export const correctAnswerAction = () => ({
   type: POINT,
 });
+
+export const scoreAction = (score) => ({
+  type: 'SCORE',
+  score,
+});
