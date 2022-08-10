@@ -20,6 +20,20 @@ class Feedback extends React.Component {
             <div data-testid="feedback-total-question">
               { points }
             </div>
+            <button
+              data-testid="btn-play-again"
+              type="button"
+              onClick={ () => history.push('/') }
+            >
+              Play Again
+            </button>
+            <button
+              data-testid="btn-ranking"
+              type="button"
+              onClick={ () => history.push('/ranking') }
+            >
+              Ranking
+            </button>
           </div>
         </>
       );
@@ -42,6 +56,13 @@ class Feedback extends React.Component {
             onClick={ () => history.push('/') }
           >
             Play Again
+          </button>
+          <button
+            data-testid="btn-ranking"
+            type="button"
+            onClick={ () => history.push('/ranking') }
+          >
+            Ranking
           </button>
         </div>
       </>
