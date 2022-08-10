@@ -176,7 +176,7 @@ class Game extends React.Component {
           {indexQuestion === tres
             && answersQuestion4.map((question, index) => (
               <button
-                disabled
+                disabled={ timer <= 0 }
                 key={ `${question}4` }
                 type="button"
                 onClick={ ({ target }) => this.handleAnswer(target) }
