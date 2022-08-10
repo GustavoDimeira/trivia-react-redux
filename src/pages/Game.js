@@ -3,18 +3,21 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
-import { correctAnswerAction } from '../redux/actions';
+import { correctAnswerAction, scoreAction } from '../redux/actions';
 import { fetchQuestions } from '../services/FetchAPI';
 
 const correctAnswer = 'correct-answer'; // por conta de repetir muitas vezes a palavra
 const tres = 3; // por conta do no magic numbers
 const quatro = 4; // por conta do no magic numbers
+const dez = 10;
+const second = 1000;
 
 class Game extends React.Component {
   constructor() {
     super();
     this.state = { errorApi: false,
       questionsCategory: [],
+      questionsDifficulty: [],
       questionCorrectAnswers: [],
       questionQuestions: [],
       indexQuestion: 0,
@@ -29,23 +32,23 @@ class Game extends React.Component {
 
   componentDidMount() {
     this.getQuestions();
-  }
-
-  componentDidUpdate() {
     this.gameTimer();
   }
 
-  gameTimer = () => {
-    const { timer } = this.state;
-    const second = 1000;
-    if (timer > 0) {
-      setTimeout(
-        () => this.setState({
-          timer: timer - 1,
-        }),
-        second,
-      );
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.timer === 0) {
+      clearInterval(this.timeout);
+      this.setState({ timer: 0 });
     }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timeout);
+  }
+
+  gameTimer = () => {
+    this.timeout = setInterval(() => this.setState((prevState) => ({
+      timer: prevState.timer - 1 })), second);
   };
 
   shuffleArray = (array) => { // função para embaralhar as respostas
@@ -63,6 +66,7 @@ class Game extends React.Component {
       this.setState({ errorApi: true });
       localStorage.clear();
     }
+    const arrayOfDifficulty = tokenApi.map((element) => element.difficulty);
     const arrayOfCategories = tokenApi.map((element) => element.category);
     const arrayOfQuestions = tokenApi.map((element) => element.question);
     const arrayOfCorrectAnswer = tokenApi.map((element) => element.correct_answer);
@@ -78,6 +82,7 @@ class Game extends React.Component {
     this.shuffleArray(answersQuestion4);
     this.shuffleArray(answersQuestion5);
     this.setState({ questionsCategory: arrayOfCategories,
+      questionsDifficulty: arrayOfDifficulty,
       questionQuestions: arrayOfQuestions,
       questionCorrectAnswers: arrayOfCorrectAnswer,
       answersQuestion1,
@@ -88,10 +93,14 @@ class Game extends React.Component {
   };
 
   handleAnswer = (target) => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
-    this.setState({ questionAnswerd: true });
-    const { correctAnswerAct } = this.props;
+    const { questionsDifficulty, indexQuestion, timer } = this.state;
+    this.setState({ questionAnswerd: true, timer });
+    const { correctAnswerAct, score } = this.props;
     if (target.className === 'correctAnswerWait') {
       correctAnswerAct();
+      if (questionsDifficulty[indexQuestion] === 'easy') { score(dez + timer); }
+      if (questionsDifficulty[indexQuestion] === 'medium') { score(dez + (timer * 2)); }
+      if (questionsDifficulty[indexQuestion] === 'hard') { score(dez + (timer * tres)); }
     }
     const correta = document.getElementsByClassName('correctAnswerWait');
     const arr = Array.prototype.slice.call(correta);
@@ -104,7 +113,9 @@ class Game extends React.Component {
   nextQuestion = () => {
     this.setState({ questionAnswerd: false });
     const { indexQuestion } = this.state;
-    this.setState({ indexQuestion: indexQuestion + 1 });
+    clearInterval(this.timeout);
+    this.gameTimer();
+    this.setState({ indexQuestion: indexQuestion + 1, timer: 30 });
   };
 
   lastQuestion = () => {
@@ -114,15 +125,14 @@ class Game extends React.Component {
 
   render() {
     const { errorApi, questionsCategory, questionQuestions, indexQuestion,
-      questionCorrectAnswers,
-      answersQuestion1, answersQuestion2, answersQuestion3,
+      questionCorrectAnswers, answersQuestion1, answersQuestion2, answersQuestion3,
       answersQuestion4, answersQuestion5, questionAnswerd, timer } = this.state;
     return (
       <>
         <Header />
         <h2>
           Tempo:
-          {timer }
+          { timer }
         </h2>
         <span
           data-testid="question-category"
@@ -229,12 +239,11 @@ class Game extends React.Component {
     );
   }
 }
-
-Game.propTypes = {
-  correctAnswerAct: PropTypes.func.isRequired,
-  history: PropTypes.shape().isRequired,
-};
+Game.propTypes = { correctAnswerAct: PropTypes.func.isRequired,
+  score: PropTypes.func.isRequired,
+  history: PropTypes.shape().isRequired };
 const mapDispatchToProps = (dispatch) => ({
   correctAnswerAct: () => { dispatch(correctAnswerAction()); },
+  score: (score) => { dispatch(scoreAction(score)); },
 });
 export default connect(null, mapDispatchToProps)(Game);
