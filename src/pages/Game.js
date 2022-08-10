@@ -21,6 +21,7 @@ class Game extends React.Component {
       questionCorrectAnswers: [],
       questionQuestions: [],
       indexQuestion: 0,
+      answersQuestions: [[], [], [], [], []],
       answersQuestion1: [],
       answersQuestion2: [],
       answersQuestion3: [],
@@ -81,15 +82,13 @@ class Game extends React.Component {
     this.shuffleArray(answersQuestion3);
     this.shuffleArray(answersQuestion4);
     this.shuffleArray(answersQuestion5);
+    const answersQuestions = [answersQuestion1, answersQuestion2, answersQuestion3, answersQuestion4, answersQuestion5];
     this.setState({ questionsCategory: arrayOfCategories,
       questionsDifficulty: arrayOfDifficulty,
       questionQuestions: arrayOfQuestions,
       questionCorrectAnswers: arrayOfCorrectAnswer,
-      answersQuestion1,
-      answersQuestion2,
-      answersQuestion3,
-      answersQuestion4,
-      answersQuestion5 });
+      answersQuestions
+    });
   };
 
   handleAnswer = (target) => { // quando é clicado em alguma resposta, o estado local "indexQuestion" aumenta
@@ -125,8 +124,7 @@ class Game extends React.Component {
 
   render() {
     const { errorApi, questionsCategory, questionQuestions, indexQuestion,
-      questionCorrectAnswers, answersQuestion1, answersQuestion2, answersQuestion3,
-      answersQuestion4, answersQuestion5, questionAnswerd, timer } = this.state;
+      questionCorrectAnswers, questionAnswerd, timer, answersQuestions } = this.state;
     return (
       <>
         <Header />
@@ -141,67 +139,10 @@ class Game extends React.Component {
         </span>
         <p data-testid="question-text">{ questionQuestions[indexQuestion] }</p>
         <div data-testid="answer-options">
-          {indexQuestion === 0
-            && answersQuestion1.map((question, index) => (
+          { answersQuestions[indexQuestion].map((question, index) => (
               <button
                 disabled={ timer <= 0 }
                 key={ `${question}1` }
-                type="button"
-                onClick={ ({ target }) => this.handleAnswer(target) }
-                className={ question === questionCorrectAnswers[indexQuestion]
-                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
-                data-testid={ question === questionCorrectAnswers[indexQuestion]
-                  ? correctAnswer : `wrong-answer-${index}` }
-              >
-                { question }
-              </button>))}
-          {indexQuestion === 1
-            && answersQuestion2.map((question, index) => (
-              <button
-                disabled={ timer <= 0 }
-                key={ `${question}2` }
-                type="button"
-                onClick={ ({ target }) => this.handleAnswer(target) }
-                className={ question === questionCorrectAnswers[indexQuestion]
-                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
-                data-testid={ question === questionCorrectAnswers[indexQuestion]
-                  ? correctAnswer : `wrong-answer-${index}` }
-              >
-                { question }
-              </button>))}
-          {indexQuestion === 2
-            && answersQuestion3.map((question, index) => (
-              <button
-                disabled={ timer <= 0 }
-                key={ `${question}3` }
-                type="button"
-                onClick={ ({ target }) => this.handleAnswer(target) }
-                className={ question === questionCorrectAnswers[indexQuestion]
-                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
-                data-testid={ question === questionCorrectAnswers[indexQuestion]
-                  ? correctAnswer : `wrong-answer-${index}` }
-              >
-                { question }
-              </button>))}
-          {indexQuestion === tres
-            && answersQuestion4.map((question, index) => (
-              <button
-                disabled={ timer <= 0 }
-                key={ `${question}4` }
-                type="button"
-                onClick={ ({ target }) => this.handleAnswer(target) }
-                className={ question === questionCorrectAnswers[indexQuestion]
-                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
-                data-testid={ question === questionCorrectAnswers[indexQuestion]
-                  ? correctAnswer : `wrong-answer-${index}` }
-              >
-                { question }
-              </button>))}
-          {indexQuestion === quatro
-            && answersQuestion5.map((question, index) => (
-              <button
-                disabled={ timer <= 0 }
-                key={ `${question}5` }
                 type="button"
                 onClick={ ({ target }) => this.handleAnswer(target) }
                 className={ question === questionCorrectAnswers[indexQuestion]
