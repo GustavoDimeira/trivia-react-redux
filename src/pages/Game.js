@@ -77,12 +77,14 @@ class Game extends React.Component {
     this.shuffleArray(answersQuestion3);
     this.shuffleArray(answersQuestion4);
     this.shuffleArray(answersQuestion5);
-    const answersQuestions = [answersQuestion1, answersQuestion2, answersQuestion3, answersQuestion4, answersQuestion5];
+    const answersQuestions = [answersQuestion1,
+      answersQuestion2, answersQuestion3,
+      answersQuestion4, answersQuestion5];
     this.setState({ questionsCategory: arrayOfCategories,
       questionsDifficulty: arrayOfDifficulty,
       questionQuestions: arrayOfQuestions,
       questionCorrectAnswers: arrayOfCorrectAnswer,
-      answersQuestions
+      answersQuestions,
     });
   };
 
@@ -107,13 +109,12 @@ class Game extends React.Component {
   nextQuestion = () => {
     const { indexQuestion } = this.state;
     if (indexQuestion === quatro) {
-      this.lastQuestion()
+      this.lastQuestion();
     } else {
-    this.setState({ questionAnswerd: false });
-    const { indexQuestion } = this.state;
-    clearInterval(this.timeout);
-    this.gameTimer();
-    this.setState({ indexQuestion: indexQuestion + 1, timer: 30 });
+      this.setState({ questionAnswerd: false });
+      clearInterval(this.timeout);
+      this.gameTimer();
+      this.setState({ indexQuestion: indexQuestion + 1, timer: 30 });
     }
   };
 
@@ -140,18 +141,18 @@ class Game extends React.Component {
         <p data-testid="question-text">{ questionQuestions[indexQuestion] }</p>
         <div data-testid="answer-options">
           { answersQuestions[indexQuestion].map((question, index) => (
-              <button
-                disabled={ timer <= 0 }
-                key={ `${question}1` }
-                type="button"
-                onClick={ ({ target }) => this.handleAnswer(target) }
-                className={ question === questionCorrectAnswers[indexQuestion]
-                  ? 'correctAnswerWait' : 'wrongAnswerWait' }
-                data-testid={ question === questionCorrectAnswers[indexQuestion]
-                  ? correctAnswer : `wrong-answer-${index}` }
-              >
-                { question }
-              </button>))}
+            <button
+              disabled={ timer <= 0 }
+              key={ `${question}1` }
+              type="button"
+              onClick={ ({ target }) => this.handleAnswer(target) }
+              className={ question === questionCorrectAnswers[indexQuestion]
+                ? 'correctAnswerWait' : 'wrongAnswerWait' }
+              data-testid={ question === questionCorrectAnswers[indexQuestion]
+                ? correctAnswer : `wrong-answer-${index}` }
+            >
+              { question }
+            </button>))}
           <br />
           <br />
           {questionAnswerd
